@@ -1,6 +1,6 @@
 import { put, takeLatest, fork, call, all, StrictEffect } from 'redux-saga/effects';
 import api from '../utils/api';
-import { Action, loadConfigurations, loadUser, loadUsers, userAuthDone } from '../redux/actions';
+import { Action, fetchAllConfigurations, loadConfigurations, loadUser, loadUsers, userAuthDone } from '../redux/actions';
 import { CoreActionType, UserActionType } from '../redux/types';
 import { push } from 'connected-react-router';
 
@@ -39,6 +39,7 @@ function* callUpdateConfiguration(action: Action<any>) {
     const { payload } = action;
 
     yield call(api.callConfigurationUpdate, 1, payload);
+    // yield put(fetchAllConfigurations());
   } catch (error) {
     yield put({ type: 'ERROR'});
   }

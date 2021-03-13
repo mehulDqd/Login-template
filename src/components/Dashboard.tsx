@@ -48,8 +48,8 @@ const TableRow: React.FunctionComponent<TableRowProps> = (props: TableRowProps) 
   };
 
   return (
-    <Table.Row className='clickable' onClick={handleClick}>
-      <Table.Cell><Image src={image} size='mini' bordered fluid /></Table.Cell>
+    <Table.Row key={id} className='clickable' onClick={handleClick}>
+      <Table.Cell><Image src={image} size='mini' bordered /></Table.Cell>
       <Table.Cell>{firstName}</Table.Cell>
       <Table.Cell>{lastName}</Table.Cell>
       <Table.Cell>{email}</Table.Cell>
@@ -63,6 +63,7 @@ const Dashboard: React.FunctionComponent = () => {
   const { is_admin: isAdmin } = currentUser;
   const { disable_passwd: disablePasswd } = configurations;
   const passwordProtection = !disablePasswd;
+  const [passwordProt, setPasswordProt] = React.useState(passwordProtection);
   const rows = users.map((user: User) => <TableRow data={user} />);
 
   React.useEffect(() => {
@@ -71,7 +72,8 @@ const Dashboard: React.FunctionComponent = () => {
   }, []);
 
   const handleChange = (event: React.SyntheticEvent, data: CheckboxProps) => {
-    dispatch(updateConfiguration({ disable_passwd: !!data.checked }));
+    setPasswordProt(!passwordProt);
+    dispatch(updateConfiguration({ disable_passwd: !data.checked }));
   };
 
   if (!isAdmin) {
@@ -87,7 +89,7 @@ const Dashboard: React.FunctionComponent = () => {
               <Header content='Registered users' />
             </Grid.Column>
             <Grid.Column className='right'>
-              <Checkbox onChange={handleChange} checked={passwordProtection} toggle label='Password protection' />
+              <Checkbox onChange={handleChange} defaultChecked={passwordProtection} checked={passwordProt} toggle label='Password protection' />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={1}>
