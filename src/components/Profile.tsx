@@ -39,8 +39,10 @@ const Profile: React.FunctionComponent<ProfileProps> = () => {
   const altUser = mapUser(users.find((user: User) => user.id === parseInt(id, 10)) || {});
 
   React.useEffect(() => {
-    dispatch(fetchUser(id));
-  }, []);
+    if (!profileIsNotFromCurrentUser) {
+      dispatch(fetchUser(id));
+    }
+  }, [profileIsNotFromCurrentUser]);
 
   return (
     <ResponsiveContainer>

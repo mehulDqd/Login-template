@@ -12,13 +12,14 @@ export interface UserStateInterface {
   users: any;
 }
 
-export interface ConfigurationsStateInterface {
+export interface CoreStateInterface {
   configurations: any;
+  loaded: boolean;
 }
 
 export interface RootState {
   user: UserStateInterface;
-  core: ConfigurationsStateInterface;
+  core: CoreStateInterface;
 }
 
 const defaultState: RootState = {
@@ -29,6 +30,7 @@ const defaultState: RootState = {
   },
   core: {
     configurations: {},
+    loaded: false,
   },
 };
 
@@ -68,7 +70,17 @@ export const reducer = createReducer<RootState>(defaultState, {
 	  return {
       ...state,
       core: {
+        ...state.core,
         configurations: action.payload,
+      },
+	  };
+	},
+  [CoreActionType.APP_LOADED](state: RootState, action: Action<any>): RootState {
+	  return {
+      ...state,
+      core: {
+        ...state.core,
+        loaded: true,
       },
 	  };
 	},
@@ -78,6 +90,7 @@ export const reducer = createReducer<RootState>(defaultState, {
       user: {
         ...state.user,
         accessToken: '',
+        currentUser: {},
       }
 	  };
 	},

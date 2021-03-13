@@ -16,18 +16,18 @@ const Home: React.FunctionComponent = () => (
         <Grid.Row>
           <Grid.Column width={8}>
             <Header as='h3' style={{ fontSize: '2em' }}>
-              We Help Companies and Companions
-          </Header>
+            Lorem ipsum dolor sit amet
+            </Header>
             <p style={{ fontSize: '1.33em' }}>
-              We can give your company superpowers to do things that they never thought possible.
-              Let us delight your customers and empower your needs... through pure data analytics.
-          </p>
+            consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
             <Header as='h3' style={{ fontSize: '2em' }}>
-              We Make Bananas That Can Dance
-          </Header>
+              Duis aute irure dolor
+            </Header>
             <p style={{ fontSize: '1.33em' }}>
-              Yes that's right, you thought it was the stuff of dreams, but even bananas can be
-              bioengineered.
+              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+                anim id est laborum.
           </p>
           </Grid.Column>
           <Grid.Column floated='right' width={6}>

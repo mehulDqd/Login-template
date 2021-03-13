@@ -1,6 +1,6 @@
 import { put, takeLatest, fork, call, all, StrictEffect } from 'redux-saga/effects';
 import api from '../utils/api';
-import { Action, fetchAllConfigurations, loadConfigurations, loadUser, loadUsers, userAuthDone } from '../redux/actions';
+import { Action, appLoaded, loadConfigurations, loadUser, loadUsers, userAuthDone } from '../redux/actions';
 import { CoreActionType, UserActionType } from '../redux/types';
 import { push } from 'connected-react-router';
 
@@ -27,6 +27,8 @@ function* callLoginUser(action: Action<any>): Generator<StrictEffect, void> {
     const response: any = yield call(api.callUserLogin, request);
     const { accessToken, userId } = response.data || {};
 
+    window.sessionStorage.setItem('accessToken', accessToken);
+
     yield put(userAuthDone(accessToken));
     yield put(push(`/profile/${userId}`));
   } catch (error) {
@@ -39,7 +41,6 @@ function* callUpdateConfiguration(action: Action<any>) {
     const { payload } = action;
 
     yield call(api.callConfigurationUpdate, 1, payload);
-    // yield put(fetchAllConfigurations());
   } catch (error) {
     yield put({ type: 'ERROR'});
   }
@@ -68,8 +69,40 @@ function* callFetchUser(action: Action<any>): Generator<StrictEffect, void> {
     const response: any = yield call(api.callGetUserProfile, action.payload);
     yield put(loadUser(response.data));
   } catch (error) {
-    yield put({ type: 'ERROR'});
+    yield put({ type: 'ERROR', error });
   }
+}
+
+function* doLogout() {
+  sessionStorage.removeItem('accessToken');
+}
+
+function* callFetchLoggedUserInfo(): Generator<StrictEffect, void, void> {
+  try {
+    const response: any = yield call(api.callGetLoggedUser);
+    yield put(loadUser(response.data));
+
+    const { is_admin: isAdmin } = response.data;
+
+    if (isAdmin) {
+      const response: any = yield call(api.callGetUsers);
+      yield put(loadUsers(response.data));
+    }
+
+    const accessToken = window.sessionStorage.getItem('accessToken');
+    yield put(userAuthDone(accessToken));
+    yield put(appLoaded());
+  } catch (error) {
+    yield put({ type: 'ERROR', error })
+  }
+}
+
+function* onLoggedUserInfoWatcher() {
+  yield takeLatest(UserActionType.LOGGED_USER_INFO, callFetchLoggedUserInfo);
+}
+
+function* onLogoutWatcher() {
+  yield takeLatest(UserActionType.LOGOUT_USER, doLogout);
 }
 
 function* onFetchUserWatcher() {
@@ -104,5 +137,7 @@ export default function* rootSagas() {
     fork(onFetchConfigurationsWatcher),
     fork(onFetchUsersWatcher),
     fork(onFetchUserWatcher),
+    fork(onLogoutWatcher),
+    fork(onLoggedUserInfoWatcher),
   ]);
 }

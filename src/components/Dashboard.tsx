@@ -89,12 +89,12 @@ const Dashboard: React.FunctionComponent = () => {
               <Header content='Registered users' />
             </Grid.Column>
             <Grid.Column className='right'>
-              <Checkbox onChange={handleChange} defaultChecked={passwordProtection} checked={passwordProt} toggle label='Password protection' />
+              <Checkbox onChange={handleChange} checked={passwordProt} toggle label='Password protection' />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={1}>
             <Grid.Column>
-              <Table inverted>
+              <Table className='customTable' inverted>
                 <TableHeaders />
                 <Table.Body>
                   {rows}

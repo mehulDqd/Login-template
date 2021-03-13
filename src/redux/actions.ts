@@ -24,3 +24,5 @@ export const updateConfiguration = createActionWithPayload(CoreActionType.UPDATE
 export const fetchAllUsers = createAction(UserActionType.FETCH_ALL_USERS);
 export const fetchAllConfigurations = createAction(CoreActionType.FETCH_ALL_CONFIGURATIONS);
 export const logoutUser = createAction(UserActionType.LOGOUT_USER);
+export const loggedUserInfo = createAction(UserActionType.LOGGED_USER_INFO);
+export const appLoaded = createAction(CoreActionType.APP_LOADED);
