@@ -2,7 +2,7 @@ import { put, takeLatest, fork, call, all, StrictEffect } from 'redux-saga/effec
 import api from '../utils/api';
 import { Action, loadConfigurations, loadUser, loadUsers, userAuthDone } from '../redux/actions';
 import { CoreActionType, UserActionType } from '../redux/types';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 
 function* callRegisterUser(action: Action<any>) {
   try {
@@ -19,9 +19,13 @@ function* callRegisterUser(action: Action<any>) {
 function* callLoginUser(action: Action<any>): Generator<StrictEffect, void> {
   try {
     const { payload } = action;
+    const request = {
+      email: payload.get('email'),
+      password: payload.get('password'),
+    };
 
-    const response: any = yield call(api.callUserLogin, payload, { 'content-type': 'multipart/form-data' });
-    const { accessToken, userId } = response;
+    const response: any = yield call(api.callUserLogin, request);
+    const { accessToken, userId } = response.data || {};
 
     yield put(userAuthDone(accessToken));
     yield put(push(`/profile/${userId}`));
@@ -34,7 +38,7 @@ function* callUpdateConfiguration(action: Action<any>) {
   try {
     const { payload } = action;
 
-    yield call(api.callConfigurationUpdate, payload, { 'content-type': 'application/json' });
+    yield call(api.callConfigurationUpdate, 1, payload);
   } catch (error) {
     yield put({ type: 'ERROR'});
   }
@@ -42,8 +46,8 @@ function* callUpdateConfiguration(action: Action<any>) {
 
 function* callFetchConfigurations(): Generator<StrictEffect, void> {
   try {
-    const data: any = yield call(api.callGetConfigurations);
-    yield put(loadConfigurations(data));
+    const response: any = yield call(api.callGetConfigurations);
+    yield put(loadConfigurations(response.data));
   } catch (error) {
     yield put({ type: 'ERROR'});
   }
@@ -51,8 +55,8 @@ function* callFetchConfigurations(): Generator<StrictEffect, void> {
 
 function* callFetchUsers(): Generator<StrictEffect, void> {
   try {
-    const data: any = yield call(api.callGetUsers);
-    yield put(loadUsers(data));
+    const response: any = yield call(api.callGetUsers);
+    yield put(loadUsers(response.data));
   } catch (error) {
     yield put({ type: 'ERROR'});
   }
@@ -60,8 +64,8 @@ function* callFetchUsers(): Generator<StrictEffect, void> {
 
 function* callFetchUser(action: Action<any>): Generator<StrictEffect, void> {
   try {
-    const user: any = yield call(api.callGetUserProfile, action.payload);
-    yield put(loadUser(user));
+    const response: any = yield call(api.callGetUserProfile, action.payload);
+    yield put(loadUser(response.data));
   } catch (error) {
     yield put({ type: 'ERROR'});
   }
@@ -91,7 +95,7 @@ function* onRegisterUserWatcher() {
   yield takeLatest(UserActionType.REGISTER_USER, callRegisterUser);
 }
 
-export default function* () {
+export default function* rootSagas() {
   yield all([
     fork(onLoginUserWatcher),
     fork(onRegisterUserWatcher),

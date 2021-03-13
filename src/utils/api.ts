@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import store from '../redux/configureStore';
 
-const baseURL = 'https://vocal-circle-307219.nn.r.appspot.com/api/';
+const baseURL = 'https://vocal-circle-307219.nn.r.appspot.com/api';
 
 const createGet = (url: string): Promise<any> => (
   new Promise((resolve, reject) => {
@@ -38,7 +38,7 @@ const createPut = (url: string, data: any): Promise<any> => (
 );
 
 export default {
-  callUserRegister: (data: any, headers: any = {}) => createPost('/signup', data, headers),
+  callUserRegister: (data: any, headers: any = {}): Promise<any> => createPost('/signup', data, headers),
   callUserLogin: (data: any, headers: any = {}): Promise<any> => createPost('/signin', data, headers),
   callConfigurationUpdate: (id: number, data: any) => createPut(`/configurations/${id}`, data),
   callGetUserProfile: (id: number) => createGet(`/profile/${id}`),

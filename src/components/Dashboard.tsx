@@ -7,6 +7,7 @@ import {
   Header,
   Segment,
   Table,
+  Image,
 } from 'semantic-ui-react';
 import ResponsiveContainer from './ResponsiveContainer';
 import Footer from './Footer';
@@ -47,8 +48,8 @@ const TableRow: React.FunctionComponent<TableRowProps> = (props: TableRowProps) 
   };
 
   return (
-    <Table.Row onClick={handleClick} as='a'>
-      <Table.Cell>{image}</Table.Cell>
+    <Table.Row className='clickable' onClick={handleClick}>
+      <Table.Cell><Image src={image} size='mini' bordered fluid /></Table.Cell>
       <Table.Cell>{firstName}</Table.Cell>
       <Table.Cell>{lastName}</Table.Cell>
       <Table.Cell>{email}</Table.Cell>
@@ -58,30 +59,34 @@ const TableRow: React.FunctionComponent<TableRowProps> = (props: TableRowProps) 
 
 const Dashboard: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  const { user: { users }, core: { configurations } } = useSelector(({ state }: ReduxState) => state);
+  const { user: { currentUser , users }, core: { configurations } } = useSelector(({ state }: ReduxState) => state);
+  const { is_admin: isAdmin } = currentUser;
   const { disable_passwd: disablePasswd } = configurations;
   const passwordProtection = !disablePasswd;
   const rows = users.map((user: User) => <TableRow data={user} />);
 
   React.useEffect(() => {
     dispatch(fetchAllUsers());
-    dispatch(fetchAllConfigurations);
+    dispatch(fetchAllConfigurations());
   }, []);
 
   const handleChange = (event: React.SyntheticEvent, data: CheckboxProps) => {
-    console.log(data);
     dispatch(updateConfiguration({ disable_passwd: !!data.checked }));
   };
 
+  if (!isAdmin) {
+    return <></>;
+  }
+
   return (
     <ResponsiveContainer>
-      <Segment style={{ padding: '8em 0em' }} vertical>
+      <Segment className='topPadding' vertical>
         <Grid container stackable>
           <Grid.Row columns={2}>
             <Grid.Column>
               <Header content='Registered users' />
             </Grid.Column>
-            <Grid.Column>
+            <Grid.Column className='right'>
               <Checkbox onChange={handleChange} checked={passwordProtection} toggle label='Password protection' />
             </Grid.Column>
           </Grid.Row>

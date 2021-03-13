@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Sidebar, Menu, Segment, Container, Button, Icon } from 'semantic-ui-react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Media } from '../utils/media';
 import { ReduxState } from '../redux/reducer';
+import { usePrevious } from '../utils/hooks';
+import { logoutUser } from '../redux/actions';
 
 interface Props {
   children: React.ReactNode;
@@ -11,6 +13,7 @@ interface Props {
 
 const MobileContainer: React.FunctionComponent<Props> = (props) => {
   const { children } = props;
+  const dispatch = useDispatch();
   const history = useHistory();
   const [sidebarIsOpen, setSidebarOpen] = React.useState(false);
   const { currentUser, accessToken } = useSelector(({ state }: ReduxState) => state.user);
@@ -20,6 +23,11 @@ const MobileContainer: React.FunctionComponent<Props> = (props) => {
   const goToSignUp = () => history.push('/signup');
   const goToLogin = () => history.push('/signin');
   const goToDashboard = () => history.push('/dashboard');
+  const prevAccessToken = usePrevious(accessToken);
+
+  if (!!prevAccessToken && !accessToken) {
+    goToHome();
+  }
 
   const hideSidebar = () => {
     setSidebarOpen(false);
@@ -27,6 +35,10 @@ const MobileContainer: React.FunctionComponent<Props> = (props) => {
 
   const showSidebar = () => {
     setSidebarOpen(true);
+  };
+
+  const handleLogout = () => {
+    setTimeout(() => dispatch(logoutUser()), 500);
   };
 
   return (
@@ -61,15 +73,21 @@ const MobileContainer: React.FunctionComponent<Props> = (props) => {
                   <Icon name='sidebar' />
                 </Menu.Item>
                 {(!accessToken || !currentUser || !currentUser.id) &&
-                <Menu.Item position='right'>
-                  <Button onClick={goToLogin} as='a' inverted>
-                    Log in
+                  <Menu.Item position='right'>
+                    <Button onClick={goToLogin} as='a' inverted>
+                      Log in
                   </Button>
-                  <Button onClick={goToSignUp} as='a' inverted style={{ marginLeft: '0.5em' }}>
-                    Sign Up
+                    <Button onClick={goToSignUp} as='a' inverted style={{ marginLeft: '0.5em' }}>
+                      Sign Up
                   </Button>
-                </Menu.Item>}
-                {currentUser?.isAdmin &&
+                  </Menu.Item>}
+                {(accessToken && currentUser?.id) &&
+                  <Menu.Item position='right'>
+                    <Button onClick={handleLogout} as='a' inverted style={{ marginLeft: '0.5em' }}>
+                      Log out
+                </Button>
+                  </Menu.Item>}
+                {currentUser?.is_admin &&
                   <Menu.Item onClick={goToDashboard} as='a' active={pathname === '/dashboard'}>Dashboard</Menu.Item>}
               </Menu>
             </Container>

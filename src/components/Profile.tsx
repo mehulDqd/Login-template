@@ -11,6 +11,8 @@ import ResponsiveContainer from './ResponsiveContainer';
 import Footer from './Footer';
 import { fetchUser } from '../redux/actions';
 import { ReduxState } from '../redux/reducer';
+import { User } from '../utils/types';
+import { mapUser } from '../utils/utils';
 
 type Props = {
   name: string;
@@ -30,17 +32,11 @@ interface ProfileProps {
 
 const Profile: React.FunctionComponent<ProfileProps> = () => {
   const dispatch = useDispatch();
-  const { user: { currentUser } } = useSelector(({ state }: ReduxState) => state);
-  const {
-    first_name: firstName = '',
-    last_name: lastName = '',
-    email = '',
-    birth = '',
-    phone_number: phoneNumber = '',
-    address = '',
-    image = '',
-  } = currentUser;
+  const { user: { currentUser, users } } = useSelector(({ state }: ReduxState) => state);
+  const currUser = mapUser(currentUser);
   const { id } = useParams<ProfileProps>();
+  const profileIsNotFromCurrentUser = currUser.isAdmin && parseInt(id, 10) !== currUser.id;
+  const altUser = mapUser(users.find((user: User) => user.id === parseInt(id, 10)) || {});
 
   React.useEffect(() => {
     dispatch(fetchUser(id));
@@ -48,24 +44,24 @@ const Profile: React.FunctionComponent<ProfileProps> = () => {
 
   return (
     <ResponsiveContainer>
-      <Segment style={{ padding: '8em 0em' }} vertical>
+      <Segment className='topPadding' vertical>
         <Grid container stackable>
           <Grid.Row columns={1}>
             <Grid.Column>
-              <Image bordered rounded size='small' src={image} />
+              <Image bordered rounded size='small' src={profileIsNotFromCurrentUser ? altUser.image : currUser.image} />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
             <Grid.Column>
               <SubItem
                 name="firstname"
-                value={firstName}
+                value={profileIsNotFromCurrentUser ? altUser.firstName : currUser.firstName}
               />
             </Grid.Column>
             <Grid.Column>
               <SubItem
                 name="lastname"
-                value={lastName}
+                value={profileIsNotFromCurrentUser ? altUser.lastName : currUser.lastName}
               />
             </Grid.Column>
           </Grid.Row>
@@ -73,13 +69,13 @@ const Profile: React.FunctionComponent<ProfileProps> = () => {
             <Grid.Column>
               <SubItem
                 name="email"
-                value={email}
+                value={profileIsNotFromCurrentUser ? altUser.email : currUser.email}
               />
             </Grid.Column>
             <Grid.Column>
               <SubItem
                 name="birth"
-                value={birth}
+                value={profileIsNotFromCurrentUser ? altUser.birth : currUser.birth}
               />
             </Grid.Column>
           </Grid.Row>
@@ -87,13 +83,13 @@ const Profile: React.FunctionComponent<ProfileProps> = () => {
             <Grid.Column>
               <SubItem
                 name="phone number"
-                value={phoneNumber}
+                value={profileIsNotFromCurrentUser ? altUser.phoneNumber : currUser.phoneNumber}
               />
             </Grid.Column>
             <Grid.Column>
               <SubItem
                 name="address"
-                value={address}
+                value={profileIsNotFromCurrentUser ? altUser.address : currUser.address}
               />
             </Grid.Column>
           </Grid.Row>

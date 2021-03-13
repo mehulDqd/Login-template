@@ -72,6 +72,15 @@ export const reducer = createReducer<RootState>(defaultState, {
       },
 	  };
 	},
+  [UserActionType.LOGOUT_USER](state: RootState, action: Action<any>): RootState {
+	  return {
+      ...state,
+      user: {
+        ...state.user,
+        accessToken: '',
+      }
+	  };
+	},
 });
 
 export default (history: History) => combineReducers({

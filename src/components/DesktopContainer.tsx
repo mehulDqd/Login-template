@@ -4,6 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 import { logoutUser } from '../redux/actions';
 import { Media } from '../utils/media';
+import { usePrevious } from '../utils/hooks';
 import { ReduxState } from '../redux/reducer';
 
 interface Props {
@@ -21,9 +22,14 @@ const DesktopContainer: React.FunctionComponent<Props> = (props) => {
   const goToSignUp = () => history.push('/signup');
   const goToLogin = () => history.push('/signin');
   const goToDashboard = () => history.push('/dashboard');
+  const prevAccessToken = usePrevious(accessToken);
+
+  if (!!prevAccessToken && !accessToken) {
+    goToHome();
+  }
 
   const handleLogout = () => {
-    dispatch(logoutUser);
+    setTimeout(() => dispatch(logoutUser()), 500);
   };
 
   return (
@@ -47,6 +53,8 @@ const DesktopContainer: React.FunctionComponent<Props> = (props) => {
                 <Menu.Item onClick={goToProfile} as='a' active={pathname === `/profile/${currentUser.id}`}>
                   Profile
                 </Menu.Item>}
+            {currentUser?.is_admin &&
+              <Menu.Item onClick={goToDashboard} as='a' active={pathname === '/dashboard'}>Dashboard</Menu.Item>}
             {(!accessToken || !currentUser || !currentUser.id) &&
             <Menu.Item position='right'>
               <Button onClick={goToLogin} as='a' inverted>
@@ -62,8 +70,6 @@ const DesktopContainer: React.FunctionComponent<Props> = (props) => {
                   Log out
                 </Button>
               </Menu.Item>}
-            {currentUser?.isAdmin &&
-              <Menu.Item onClick={goToDashboard} as='a' active={pathname === '/dashboard'}>Dashboard</Menu.Item>}
           </Container>
         </Menu>
       </Segment>

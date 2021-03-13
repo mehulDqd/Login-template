@@ -7,5 +7,5 @@ export interface User {
   address?: string;
   email?: string;
   birth?: string;
-  isAdmin?: boolean;
+  is_admin?: boolean;
 }

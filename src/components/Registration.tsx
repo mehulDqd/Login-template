@@ -13,6 +13,7 @@ import { registerUser } from '../redux/actions';
 
 const Registration: React.FunctionComponent = () => {
   const dispatch = useDispatch();
+  const [isLoading, setLoading] = React.useState(false);
   const [password, setPassword] = React.useState('');
   const [confirmedPassword, setConfirmedPassword] = React.useState('');
   const handlePasswordChange = (event: React.SyntheticEvent, data: InputOnChangeData) => {
@@ -29,12 +30,14 @@ const Registration: React.FunctionComponent = () => {
       return false;
     }
 
+    setLoading(true);
+
     dispatch(registerUser(formData));
   };
 
   return (
     <ResponsiveContainer>
-      <Segment style={{ padding: '8em 0em' }} vertical>
+      <Segment className='topPadding' vertical>
         <Form onSubmit={handleSubmit}>
           <Grid container stackable>
             <Grid.Row columns={2}>
@@ -131,7 +134,7 @@ const Registration: React.FunctionComponent = () => {
             </Grid.Row>
             <Grid.Row centered columns={1}>
               <Grid.Column>
-                <Button type='submit'>Submit</Button>
+                <Button loading={isLoading} type='submit'>Submit</Button>
               </Grid.Column>
             </Grid.Row>
           </Grid>
