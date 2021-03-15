@@ -6,7 +6,9 @@ const createGet = (url: string): Promise<any> => (
   new Promise((resolve, reject) => {
     try {
       const accessToken = window.sessionStorage.getItem('accessToken');
-      Axios.get(`${baseURL}${url}`, { headers: { Authorization: accessToken } }).then(response => resolve(response));
+      Axios.get(`${baseURL}${url}`, { headers: { Authorization: accessToken } })
+        .then(response => resolve(response))
+        .catch(error => reject(error));
     } catch (ex) {
       reject(ex);
     }
@@ -18,7 +20,8 @@ const createPost = (url: string, data: any, headers: any = {}): Promise<any> => 
     try {
       const accessToken = window.sessionStorage.getItem('accessToken');
       Axios.post(`${baseURL}${url}`, data, { headers: { ...headers, Authorization: accessToken } })
-        .then(response => resolve(response));
+        .then(response => resolve(response))
+        .catch(error => reject(error));
     } catch (ex) {
       reject(ex);
     }
@@ -29,7 +32,9 @@ const createPut = (url: string, data: any): Promise<any> => (
   new Promise((resolve, reject) => {
     try {
       const accessToken = window.sessionStorage.getItem('accessToken');
-      Axios.put(`${baseURL}${url}`, data, { headers: { Authorization: accessToken } }).then(response => resolve(response));
+      Axios.put(`${baseURL}${url}`, data, { headers: { Authorization: accessToken } })
+        .then(response => resolve(response))
+        .catch(error => reject(error));
     } catch (ex) {
       reject(ex);
     }

@@ -12,7 +12,7 @@ function* callRegisterUser(action: Action<any>) {
 
     yield put(push('/signin'));
   } catch (error) {
-    yield put({ type: 'ERROR'});
+    yield put({ type: 'SIGNUP_ERROR'});
   }
 }
 
@@ -32,7 +32,7 @@ function* callLoginUser(action: Action<any>): Generator<StrictEffect, void> {
     yield put(userAuthDone(accessToken));
     yield put(push(`/profile/${userId}`));
   } catch (error) {
-    yield put({ type: 'ERROR'});
+    yield put({ type: 'LOGIN_ERROR'});
   }
 }
 
@@ -42,7 +42,7 @@ function* callUpdateConfiguration(action: Action<any>) {
 
     yield call(api.callConfigurationUpdate, 1, payload);
   } catch (error) {
-    yield put({ type: 'ERROR'});
+    yield put({ type: 'UPDATE_CONFIGURATIONS_ERROR'});
   }
 }
 
@@ -51,7 +51,7 @@ function* callFetchConfigurations(): Generator<StrictEffect, void> {
     const response: any = yield call(api.callGetConfigurations);
     yield put(loadConfigurations(response.data));
   } catch (error) {
-    yield put({ type: 'ERROR'});
+    yield put({ type: 'FETCH_CONFIGURATIONS_ERROR'});
   }
 }
 
@@ -60,7 +60,7 @@ function* callFetchUsers(): Generator<StrictEffect, void> {
     const response: any = yield call(api.callGetUsers);
     yield put(loadUsers(response.data));
   } catch (error) {
-    yield put({ type: 'ERROR'});
+    yield put({ type: 'FETCH_USERS_ERROR'});
   }
 }
 
@@ -69,7 +69,7 @@ function* callFetchUser(action: Action<any>): Generator<StrictEffect, void> {
     const response: any = yield call(api.callGetUserProfile, action.payload);
     yield put(loadUser(response.data));
   } catch (error) {
-    yield put({ type: 'ERROR', error });
+    yield put({ type: 'FETCH_USER_ERROR', error });
   }
 }
 
@@ -98,7 +98,7 @@ function* callFetchLoggedUserInfo(): Generator<StrictEffect, void, RouterState> 
 
     yield put(appLoaded());
   } catch (error) {
-    yield put({ type: 'ERROR', error })
+    yield put({ type: 'FETCH_LOGGED_USER_ERROR', error })
   }
 }
 
