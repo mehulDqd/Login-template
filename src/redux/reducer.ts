@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { connectRouter } from 'connected-react-router';
+import { connectRouter, RouterState } from 'connected-react-router';
 import { History } from 'history';
 import createReducer from './createReducer';
 import { CoreActionType, UserActionType } from './types';
@@ -36,6 +36,7 @@ const defaultState: RootState = {
 
 export interface ReduxState {
   state: RootState;
+  router: RouterState;
 }
 
 export const reducer = createReducer<RootState>(defaultState, {
@@ -96,7 +97,9 @@ export const reducer = createReducer<RootState>(defaultState, {
 	},
 });
 
-export default (history: History) => combineReducers({
+const rootReducer = (history: History) => combineReducers({
 	state: reducer,
 	router: connectRouter(history),
 });
+
+export default rootReducer;

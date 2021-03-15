@@ -2,7 +2,7 @@ import { put, takeLatest, fork, call, all, StrictEffect } from 'redux-saga/effec
 import api from '../utils/api';
 import { Action, appLoaded, loadConfigurations, loadUser, loadUsers, userAuthDone } from '../redux/actions';
 import { CoreActionType, UserActionType } from '../redux/types';
-import { push } from 'connected-react-router';
+import { push, RouterState } from 'connected-react-router';
 
 function* callRegisterUser(action: Action<any>) {
   try {
@@ -74,23 +74,28 @@ function* callFetchUser(action: Action<any>): Generator<StrictEffect, void> {
 }
 
 function* doLogout() {
-  sessionStorage.removeItem('accessToken');
+  window.sessionStorage.removeItem('accessToken');
 }
 
-function* callFetchLoggedUserInfo(): Generator<StrictEffect, void, void> {
+function* callFetchLoggedUserInfo(): Generator<StrictEffect, void, RouterState> {
   try {
     const response: any = yield call(api.callGetLoggedUser);
     yield put(loadUser(response.data));
 
-    const { is_admin: isAdmin } = response.data;
+    const { is_admin: isAdmin, sessionHasExpired = false } = response.data || {};
+
+    if (sessionHasExpired) {
+      window.sessionStorage.removeItem('accessToken');
+    } else {
+      const accessToken = window.sessionStorage.getItem('accessToken');
+      yield put(userAuthDone(accessToken));
+    }
 
     if (isAdmin) {
       const response: any = yield call(api.callGetUsers);
       yield put(loadUsers(response.data));
     }
 
-    const accessToken = window.sessionStorage.getItem('accessToken');
-    yield put(userAuthDone(accessToken));
     yield put(appLoaded());
   } catch (error) {
     yield put({ type: 'ERROR', error })

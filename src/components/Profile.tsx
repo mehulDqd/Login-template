@@ -42,7 +42,7 @@ const Profile: React.FunctionComponent<ProfileProps> = () => {
     if (!profileIsNotFromCurrentUser) {
       dispatch(fetchUser(id));
     }
-  }, [profileIsNotFromCurrentUser]);
+  }, []);
 
   return (
     <ResponsiveContainer>

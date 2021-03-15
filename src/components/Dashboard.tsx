@@ -49,7 +49,7 @@ const TableRow: React.FunctionComponent<TableRowProps> = (props: TableRowProps) 
 
   return (
     <Table.Row key={id} className='clickable' onClick={handleClick}>
-      <Table.Cell><Image src={image} size='mini' bordered /></Table.Cell>
+      <Table.Cell><Image className='table-picture' src={image} size='mini' bordered /></Table.Cell>
       <Table.Cell>{firstName}</Table.Cell>
       <Table.Cell>{lastName}</Table.Cell>
       <Table.Cell>{email}</Table.Cell>

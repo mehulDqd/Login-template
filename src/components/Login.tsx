@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react';
+import { Button, Form, Grid, Header, Segment } from 'semantic-ui-react';
 import { ReduxState } from '../redux/reducer';
 import { loginUser, fetchAllConfigurations } from '../redux/actions';
 import ResponsiveContainer from './ResponsiveContainer';

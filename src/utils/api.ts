@@ -36,7 +36,7 @@ const createPut = (url: string, data: any): Promise<any> => (
   })
 );
 
-export default {
+const api = {
   callUserRegister: (data: any, headers: any = {}): Promise<any> => createPost('/signup', data, headers),
   callUserLogin: (data: any, headers: any = {}): Promise<any> => createPost('/signin', data, headers),
   callConfigurationUpdate: (id: number, data: any) => createPut(`/configurations/${id}`, data),
@@ -45,3 +45,5 @@ export default {
   callGetConfigurations: () => createGet('/configurations'),
   callGetLoggedUser: () => createGet('/info'),
 };
+
+export default api;
